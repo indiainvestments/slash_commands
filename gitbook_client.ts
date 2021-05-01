@@ -57,6 +57,8 @@ interface GitbookContent {
   assets: GitbookAsset[];
 }
 
+const weights: Record<string, number> = {}; // { [pageId]: weight } where 0 <= weight <= 1
+
 export class GitbookSpaceClient {
   public gitbookUrl: string;
   public ApiUrl: string;
@@ -119,6 +121,10 @@ export class GitbookSpaceClient {
         url: `${this.gitbookUrl}/${item.url}`,
         path: item.url
       };
+    }).sort((a, b) => {
+      const weightA = weights[a.id] ?? 1.0;
+      const weightB = weights[b.id] ?? 1.0;
+      return weightB - weightA;
     });
   }
 
