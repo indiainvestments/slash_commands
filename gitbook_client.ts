@@ -57,7 +57,29 @@ interface GitbookContent {
   assets: GitbookAsset[];
 }
 
-const weights: Record<string, number> = {}; // { [pageId]: weight } where 0 <= weight <= 1
+const META = [
+  // Contribution Section
+  '-MUT44m0zGXuCi0rUs28',
+  '-MXftqWR-46qRerHYbX1',
+  '-MWrp0wRPkhCuGQnrLK3',
+  '-MVfORXYJJA8ZqJKpZ91',
+  '-MVget5RMt31IiGdVo10',
+  '-MUhXHTdifsuHV9ZkCaI',
+  '-MVghkRhRWonKF13-sEC',
+  '-MUq-yQFrhl_089eEZs4',
+  '-MVgolonv89L-NxZeNOw',
+  '-MWJfveO8bGBov2VZ_r2',
+  // Disclaimers and Disclosures
+  '-MVk5ZMXrwmANrFFxtgG'
+].reduce((map, uid) => {
+  map[uid] = 0.5;
+  return map;
+}, {} as Record<string, number>);
+
+const WEIGHTS: Record<string, number> = {
+  '-MUEnNPwNxmH8dSZmQfX': 0.6, // Introduction
+  ...META, // Meta links with weightage of 0.5
+};
 
 export class GitbookSpaceClient {
   public gitbookUrl: string;
@@ -122,8 +144,8 @@ export class GitbookSpaceClient {
         path: item.url
       };
     }).sort((a, b) => {
-      const weightA = weights[a.id] ?? 1.0;
-      const weightB = weights[b.id] ?? 1.0;
+      const weightA = WEIGHTS[a.id] ?? 1.0;
+      const weightB = WEIGHTS[b.id] ?? 1.0;
       return weightB - weightA;
     });
   }
