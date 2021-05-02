@@ -1,4 +1,4 @@
-import * as slash from "https://raw.githubusercontent.com/harmonyland/harmony/ca3d68e6a0c3b770b0a907767cf8d659a2afbd69/deploy.ts";
+import * as slash from "https://raw.githubusercontent.com/harmonyland/harmony/fe6ee7ddacb161ca997534e6639847f0f9567bc6/deploy.ts";
 import { Embed } from "https://deno.land/x/harmony@v1.1.5/mod.ts";
 import { chunk, randomHexColorGen } from "./utils.ts";
 import { GitbookSpaceClient } from "./gitbook_client.ts";
