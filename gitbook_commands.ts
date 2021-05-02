@@ -1,4 +1,4 @@
-import * as slash from "https://raw.githubusercontent.com/harmonyland/harmony/fe6ee7ddacb161ca997534e6639847f0f9567bc6/deploy.ts";
+import * as slash from "https://raw.githubusercontent.com/lamebox/harmony/lamebox-patch-1/deploy.ts";
 import { Embed } from "https://deno.land/x/harmony@v1.1.5/mod.ts";
 import { chunk, randomHexColorGen } from "./utils.ts";
 import { GitbookSpaceClient } from "./gitbook_client.ts";
