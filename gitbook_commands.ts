@@ -38,7 +38,7 @@ if (commands.size !== COMMANDS_SIZE) {
       }],
     },
     {
-      name: "search1",
+      name: "weighted",
       description: `Search ${GITBOOK_NAME} wiki.`,
       options: [{
         name: "query",
@@ -54,7 +54,7 @@ if (commands.size !== COMMANDS_SIZE) {
   ]);
 }
 
-slash.handle("search1", async (interaction) => {
+slash.handle("weighted", async (interaction) => {
   const [query, limit] = interaction.options;
   const results = await client.searchSpace(query.value);
   if (!results.length) {
