@@ -1,4 +1,4 @@
-import * as slash from "https://raw.githubusercontent.com/lamebox/harmony/lamebox-patch-1/deploy.ts";
+import * as slash from "https://raw.githubusercontent.com/harmonyland/harmony/c3d1714a6e3199d7c8367b448d99f7a95d3fa0cf/deploy.ts";
 import { Embed } from "https://deno.land/x/harmony@v1.1.5/mod.ts";
 import { chunk, randomHexColorGen } from "./utils.ts";
 import { GitbookSpaceClient } from "./gitbook_client.ts";
@@ -38,7 +38,7 @@ if (commands.size !== COMMANDS_SIZE) {
       }],
     },
     {
-      name: "search",
+      name: "search1",
       description: `Search ${GITBOOK_NAME} wiki.`,
       options: [{
         name: "query",
@@ -54,7 +54,7 @@ if (commands.size !== COMMANDS_SIZE) {
   ]);
 }
 
-slash.handle("search", async (interaction) => {
+slash.handle("search1", async (interaction) => {
   const [query, limit] = interaction.options;
   const results = await client.searchSpace(query.value);
   if (!results.length) {
