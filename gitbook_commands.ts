@@ -17,10 +17,10 @@ const GITBOOK_NAME = env.get("GITBOOK_NAME")!;
 
 const randomHexColor = randomHexColorGen();
 
-const client = new GitbookSpaceClient(GITBOOK_TOKEN, {
-    spaceId: GITBOOK_SPACE_ID,
-    gitbookUrl: GITBOOK_URL,
-});
+// const client = new GitbookSpaceClient(GITBOOK_TOKEN, {
+//     spaceId: GITBOOK_SPACE_ID,
+//     gitbookUrl: GITBOOK_URL,
+// });
 
 const commands = await slash.commands.all();
 
@@ -55,7 +55,7 @@ if (commands.size !== COMMANDS_SIZE) {
 }
 
 
-slash.handle("weighted", async (interaction) => {
+slash.registerHandler("weighted", async (interaction) => {
     console.log("handling weighted command")
     const [query, limit] = interaction.options;
     // const results = await client.searchSpace(query.value);
@@ -74,7 +74,7 @@ slash.handle("weighted", async (interaction) => {
     // return interaction.reply(results[0].url);
 });
 
-slash.handle("list", async (interaction) => {
+slash.registerHandler("list", async (interaction) => {
     console.log("handling list command")
     const [query] = interaction.options;
     try {
@@ -85,7 +85,7 @@ slash.handle("list", async (interaction) => {
             description: "This is dummy data only, testing"
         }
 
-        const items = Array.from({ length: 10 }, (_, i) => {
+        const items = Array.from({ length: 8 }, (_, i) => {
             return {
                 title: `Title ${i}`,
                 url: `https://dumm.yu.rl/data/${i}`,
@@ -133,7 +133,7 @@ slash.handle("list", async (interaction) => {
     }
 });
 
-slash.handle("*", (d) => d.reply({
+slash.registerHandler("*", (d) => d.reply({
     content: `Unhandled command`,
     ephemeral: true,
 }));
