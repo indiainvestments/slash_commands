@@ -54,6 +54,7 @@ if (commands.size !== COMMANDS_SIZE) {
     ]);
 }
 
+
 slash.handle("weighted", async (interaction) => {
     console.log("handling weighted command")
     const [query, limit] = interaction.options;
@@ -74,7 +75,7 @@ slash.handle("weighted", async (interaction) => {
 });
 
 slash.handle("list", async (interaction) => {
-    console.log("handling list command ")
+    console.log("handling list command")
     const [query] = interaction.options;
     try {
         // const result = await client.list(query.value);
