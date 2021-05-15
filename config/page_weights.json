@@ -1,0 +1,14 @@
+[
+    {
+        "path": "/",
+        "weight": 0.6
+    },
+    {
+        "path": "/contributors/.*",
+        "weight": 0.5
+    },
+    {
+        "path": "faqs/.*",
+        "weight": 1.1
+    }
+]
