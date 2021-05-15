@@ -4,7 +4,6 @@ import { chunk, randomHexColorGen } from "./utils.ts";
 import { GitbookSpaceClient } from "./gitbook_client.ts";
 
 const { env } = Deno;
-
 slash.init({
     env: true,
 });
@@ -12,18 +11,17 @@ slash.init({
 const COMMANDS_SIZE = 2;
 const GITBOOK_SPACE_ID = env.get("GITBOOK_SPACE_ID")!;
 const GITBOOK_TOKEN = env.get("GITBOOK_TOKEN")!;
-const GITBOOK_URL = env.get("GITBOOK_URL")!;
+const GITBOOK_API_URL = env.get("GITBOOK_API_URL")!;
 const GITBOOK_NAME = env.get("GITBOOK_NAME")!;
 
 const randomHexColor = randomHexColorGen();
 
-// const client = new GitbookSpaceClient(GITBOOK_TOKEN, {
-//     spaceId: GITBOOK_SPACE_ID,
-//     gitbookUrl: GITBOOK_URL,
-// });
+const client = new GitbookSpaceClient(GITBOOK_TOKEN, {
+    spaceId: GITBOOK_SPACE_ID,
+    gitbookApiUrl: GITBOOK_API_URL,
+});
 
 const commands = await slash.commands.all();
-
 // Create Slash Commands
 if (commands.size !== COMMANDS_SIZE) {
     slash.commands.bulkEdit([
@@ -56,43 +54,34 @@ if (commands.size !== COMMANDS_SIZE) {
 
 
 slash.registerHandler("weighted", async (interaction) => {
-    console.log("handling weighted command")
     const [query, limit] = interaction.options;
-    // const results = await client.searchSpace(query.value);
-    // if (!results.length) {
-    return interaction.reply({
-        content: `Dummy reponse: \`${query.value}\``,
-        ephemeral: true,
-    });
-    // }
-
-    // if (limit) {
-    //   return interaction.reply(
-    //     results.slice(0, limit.value).map((item) => item.url).join("\n"),
-    //   );
-    // }
-    // return interaction.reply(results[0].url);
+    try {
+        const results = await client.searchSpace(query.value);
+        if (!results.length) {
+            return interaction.reply({
+                content: `Nothing found for your query: \`${query.value}\``,
+                ephemeral: true,
+            });
+        }
+    
+        if (limit) {
+            return interaction.reply(
+                results.slice(0, limit.value).map((item) => item.url).join("\n"),
+            );
+        }
+        return interaction.reply(results[0].url);
+    } catch (err) {
+        return interaction.reply({
+            content: 'Something went wrong',
+            ephemeral: true
+        })
+    }
 });
 
 slash.registerHandler("list", async (interaction) => {
-    console.log("handling list command")
     const [query] = interaction.options;
     try {
-        // const result = await client.list(query.value);
-        const result = {
-            title: "Title",
-            url: "https://dumm.yu.rl/data",
-            description: "This is dummy data only, testing"
-        }
-
-        const items = Array.from({ length: 8 }, (_, i) => {
-            return {
-                title: `Title ${i}`,
-                url: `https://dumm.yu.rl/data/${i}`,
-                description: `This is dummy data only, testing for ${i}`
-            }
-        })
-
+        const result = await client.list(query.value);
         const color = randomHexColor.next().value;
         const embeds: Embed[] = [];
 
@@ -101,13 +90,13 @@ slash.registerHandler("list", async (interaction) => {
             .setURL(result.url)
             .setColor(color);
 
-        if (result.description) {
+        if (result.description && result.description !== "") {
             header.setDescription(result.description);
         }
 
         embeds.push(header);
 
-        const chunked = chunk(items, 5);
+        const chunked = chunk(result.items, 5);
 
         for (const c of chunked) {
             const desc = c.map((item) => {

@@ -1,7 +1,7 @@
 interface GitbookClientOptions {
   version?: "v1";
   spaceId: string;
-  gitbookUrl: string;
+  gitbookApiUrl: string;
 }
 
 interface GitbookSearchSection {
@@ -12,7 +12,7 @@ interface GitbookSearchSection {
 }
 
 interface GitbookSearchNode {
-  id: string;
+  uid: string;
   title: string;
   sections: GitbookSearchSection[];
   url: string;
@@ -82,19 +82,20 @@ const WEIGHTS: Record<string, number> = {
 };
 
 export class GitbookSpaceClient {
-  public gitbookUrl: string;
+  public apiUrl: string;
   public spaceId: string;
   public headers: Headers;
   public version: string;
+  public iiGitbookBaseUrl: string = 'https://indiainvestments.gitbook.io/content';
   constructor(
     token: string,
-    { spaceId, gitbookUrl, version }: GitbookClientOptions,
+    { spaceId, gitbookApiUrl, version }: GitbookClientOptions,
   ) {
     this.spaceId = spaceId;
     // trim forward slash
-    this.gitbookUrl = gitbookUrl.endsWith("/")
-      ? gitbookUrl.slice(0, -1)
-      : gitbookUrl;
+    this.apiUrl = gitbookApiUrl.endsWith("/")
+      ? gitbookApiUrl.slice(0, -1)
+      : gitbookApiUrl;
     this.version = version ?? "v1";
     const headers = new Headers();
     headers.set("Authorization", `Bearer ${token}`);
@@ -106,7 +107,7 @@ export class GitbookSpaceClient {
     const rest = path.startsWith("/") ? path.slice(1, path.length) : path;
     const url = new URL(
       `${this.version}/spaces/${this.spaceId}/${rest}`,
-      this.gitbookUrl,
+      this.apiUrl,
     );
     if (params) {
       url.search = params.toString();
@@ -138,18 +139,19 @@ export class GitbookSpaceClient {
     return results.map((item) => {
       return {
         ...item,
-        url: `${this.gitbookUrl}/${item.url}`,
+        url: `${this.iiGitbookBaseUrl}/${item.url}`,
         path: item.url
       };
     }).sort((a, b) => {
-      const weightA = WEIGHTS[a.id] ?? 1.0;
-      const weightB = WEIGHTS[b.id] ?? 1.0;
+      const weightA = WEIGHTS[a.uid] ?? 1.0;
+      const weightB = WEIGHTS[b.uid] ?? 1.0;
       return weightB - weightA;
     });
   }
 
   async list(query: string, variant = "main") {
-    const [main] = await this.searchSpace(query);
+    const searchSpace = await this.searchSpace(query);
+    const [main] = searchSpace;
     if (!main) {
       throw new Error(`No results found for query: ${query}`);
     }
@@ -159,12 +161,12 @@ export class GitbookSpaceClient {
     return {
       title: content.title,
       description: content.description,
-      url: `${this.gitbookUrl}/${main.url}`,
+      url: main.url,
       items: (content.pages ?? []).map((page) => {
         return {
           title: page.title,
           description: page.description,
-          url: `${this.gitbookUrl}/${main.url}/${page.path}`,
+          url: `${main.url}/${page.path}`,
         };
       }),
     };
