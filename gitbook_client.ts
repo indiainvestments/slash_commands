@@ -83,7 +83,6 @@ const WEIGHTS: Record<string, number> = {
 
 export class GitbookSpaceClient {
   public gitbookUrl: string;
-  public ApiUrl: string;
   public spaceId: string;
   public headers: Headers;
   public version: string;
@@ -91,7 +90,6 @@ export class GitbookSpaceClient {
     token: string,
     { spaceId, gitbookUrl, version }: GitbookClientOptions,
   ) {
-    this.ApiUrl = "https://api-beta.gitbook.com";
     this.spaceId = spaceId;
     // trim forward slash
     this.gitbookUrl = gitbookUrl.endsWith("/")
@@ -108,7 +106,7 @@ export class GitbookSpaceClient {
     const rest = path.startsWith("/") ? path.slice(1, path.length) : path;
     const url = new URL(
       `${this.version}/spaces/${this.spaceId}/${rest}`,
-      this.ApiUrl,
+      this.gitbookUrl,
     );
     if (params) {
       url.search = params.toString();
