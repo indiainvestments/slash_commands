@@ -117,6 +117,10 @@ export class GitbookSpaceClient {
     return this.get(
       `content/v/${variant}/url/${path.startsWith('/') ? path.slice(1) : path}`
     );
+    return {
+      ...content,
+      contentCompletePath: `${path.startsWith('/') ? path.slice(1) : path}`
+    }
   }
 
   async list(query: string, variant = "main") {
