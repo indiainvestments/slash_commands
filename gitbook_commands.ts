@@ -2,6 +2,7 @@ import * as slash from "https://raw.githubusercontent.com/indiainvestments/harmo
 import { Embed } from "https://raw.githubusercontent.com/harmonyland/harmony/ce455c50c3af667a02077db5ffb79c5086510945/src/structures/embed.ts";
 import { chunk, randomHexColorGen } from "./utils.ts";
 import { GitbookSpaceClient } from "./gitbook_client.ts";
+import { GitbookPage } from "./types/index.d.ts";
 
 const { env } = Deno;
 slash.init({
@@ -59,28 +60,52 @@ if (commands.size !== COMMANDS_SIZE) {
 
 slash.registerHandler("weighted", async (interaction) => {
   console.log("weighted", interaction);
-  const [query, limit] = interaction.options;
+  const startTime = new Date().getTime();
+  const [query, limit = {value: 1}] = interaction.options;
   try {
-    const results = await client.searchSpace(query.value);
+    let results = await client.searchSpace(query.value);
     if (!results.length) {
       return interaction.reply({
         content: `Nothing found for your query: \`${query.value}\``,
         ephemeral: true,
       });
     }
-
-    if (limit) {
-      return interaction.reply(
-        results
-          .slice(0, limit.value)
-          .map((item) => item.url)
-          .join("\n")
-      );
+  
+    results = results.slice(0, limit.value);
+    const contents = await Promise.all(results.map(async (res) => {
+      return await client.fetchContentOfPage(res.path);
+    }));
+    
+    const embeds = [];
+    const color = randomHexColor.next().value;
+    const contentChunks = chunk(contents, 5);
+    
+    for (const contentChunk of contentChunks) {
+      const desc = contentChunk.map((content) => {
+        return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.url})**\n${
+          content.description || "No description available."
+        }`
+      }).join("\n\n");
+      const embed = new Embed().setColor(color);
+      embed.setDescription(desc);
+      embeds.push(embed);
     }
-    return interaction.reply(results[0].url);
+
+    if (embeds.length <= 0) {
+      return interaction.reply({
+        content: `Nothing found for your query: \`${query.value}\``,
+        ephemeral: true,
+      });
+    }
+    const timeTaken = (new Date().getTime() - startTime) / (1000);
+    embeds[embeds.length - 1].setFooter(`query: ${query.value} limit: ${limit.value} | ${(timeTaken)} seconds`)
+    return interaction.respond({
+      embeds,
+    });
   } catch (err) {
+    console.log("exception", err);
     return interaction.reply({
-      content: "Something went wrong",
+      content: `Something went wrong for your query: \`${query.value}\``,
       ephemeral: true,
     });
   }
@@ -88,6 +113,7 @@ slash.registerHandler("weighted", async (interaction) => {
 
 slash.registerHandler("list", async (interaction) => {
   console.log("list", interaction);
+  const startTime = new Date().getTime();
   const [query] = interaction.options;
   try {
     const result = await client.list(query.value);
@@ -120,11 +146,13 @@ slash.registerHandler("list", async (interaction) => {
 
       embeds.push(em);
     }
-
+    const timeTaken = (new Date().getTime() - startTime) / (1000);
+    embeds[embeds.length - 1].setFooter(`query: ${query.value} | ${(timeTaken)} seconds`)
     return interaction.respond({
       embeds,
     });
   } catch (err) {
+    console.log("exception", err);
     interaction.reply({
       content: err.message,
       ephemeral: true,

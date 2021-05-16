@@ -97,15 +97,19 @@ export class GitbookSpaceClient {
       });
   }
 
+  async fetchContentOfPage(path: string, variant = "main") {
+    return this.get(
+      `content/v/${variant}/url/${path.startsWith('/') ? path.slice(1) : path}`
+    );
+  }
+
   async list(query: string, variant = "main") {
     const searchSpace = await this.searchSpace(query);
     const [main] = searchSpace;
     if (!main) {
       throw new Error(`No results found for query: ${query}`);
     }
-    const content: GitbookPage = await this.get(
-      `content/v/${variant}/url/${main.path}`
-    );
+    const content: GitbookPage = await this.fetchContentOfPage(main.path);
     return {
       title: content.title,
       description: content.description,
