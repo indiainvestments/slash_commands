@@ -86,11 +86,14 @@ slash.registerHandler("weighted", async (interaction) => {
         }`
       }).join("\n\n");
       const embed = new Embed().setColor(color);
+
+      console.log("adding desc in embed", desc);
       embed.setDescription(desc);
       embeds.push(embed);
     }
 
     if (embeds.length <= 0) {
+      console.log("embeds length <= 0");
       return interaction.reply({
         content: `Nothing found for your query: \`${query.value}\``,
         ephemeral: true,
@@ -106,7 +109,6 @@ slash.registerHandler("weighted", async (interaction) => {
       embeds,
     });
   } catch (err) {
-    console.log("exception", err);
     return interaction.reply({
       content: `Something went wrong for your query: \`${query.value}\``,
       ephemeral: true,
@@ -115,7 +117,6 @@ slash.registerHandler("weighted", async (interaction) => {
 });
 
 slash.registerHandler("list", async (interaction) => {
-  console.log("list", interaction);
   const [query] = interaction.options;
   try {
     const {page: result, timeTaken} = await client.list(query.value);
@@ -160,7 +161,6 @@ slash.registerHandler("list", async (interaction) => {
       embeds,
     });
   } catch (err) {
-    console.log("exception", err);
     interaction.reply({
       content: err.message,
       ephemeral: true,
