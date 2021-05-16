@@ -60,18 +60,18 @@ if (commands.size !== COMMANDS_SIZE) {
 
 slash.registerHandler("weighted", async (interaction) => {
   console.log("weighted", interaction);
-  const startTime = new Date().getTime();
   const [query, limit = {value: 1}] = interaction.options;
   try {
-    let results = await client.searchSpace(query.value);
+    let {results, timeTaken} = await client.searchSpace(query.value);
     if (!results.length) {
       return interaction.reply({
         content: `Nothing found for your query: \`${query.value}\``,
         ephemeral: true,
       });
     }
-  
+    console.log("before slice", results.length);
     results = results.slice(0, limit.value);
+    console.log("after slice", results.length);
     const contents = await Promise.all(results.map(async (res) => {
       return await client.fetchContentOfPage(res.path);
     }));
@@ -82,7 +82,7 @@ slash.registerHandler("weighted", async (interaction) => {
     
     for (const contentChunk of contentChunks) {
       const desc = contentChunk.map((content) => {
-        return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.url})**\n${
+        return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.path})**\n${
           content.description || "No description available."
         }`
       }).join("\n\n");
@@ -97,8 +97,7 @@ slash.registerHandler("weighted", async (interaction) => {
         ephemeral: true,
       });
     }
-    const timeTaken = (new Date().getTime() - startTime) / (1000);
-    embeds[embeds.length - 1].setFooter(`query: ${query.value} limit: ${limit.value} | ${(timeTaken)} seconds`)
+    embeds[embeds.length - 1].setFooter(`\/weighted \`query\`: ${query.value} \`limit\`: ${limit.value} | retrieved in ${(timeTaken)} seconds`)
     return interaction.respond({
       embeds,
     });
@@ -113,10 +112,9 @@ slash.registerHandler("weighted", async (interaction) => {
 
 slash.registerHandler("list", async (interaction) => {
   console.log("list", interaction);
-  const startTime = new Date().getTime();
   const [query] = interaction.options;
   try {
-    const result = await client.list(query.value);
+    const {page: result, timeTaken} = await client.list(query.value);
     const color = randomHexColor.next().value;
     const embeds: Embed[] = [];
 
@@ -146,8 +144,7 @@ slash.registerHandler("list", async (interaction) => {
 
       embeds.push(em);
     }
-    const timeTaken = (new Date().getTime() - startTime) / (1000);
-    embeds[embeds.length - 1].setFooter(`query: ${query.value} | ${(timeTaken)} seconds`)
+    embeds[embeds.length - 1].setFooter(`\/list \`query\`: ${query.value} | retrieved in ${(timeTaken)} seconds`)
     return interaction.respond({
       embeds,
     });
