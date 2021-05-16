@@ -114,6 +114,7 @@ slash.registerHandler("weighted", async (interaction) => {
 });
 
 slash.registerHandler("list", async (interaction) => {
+  console.log("list", interaction);
   const [query] = interaction.options;
   try {
     const {page: result, timeTaken} = await client.list(query.value);
