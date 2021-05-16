@@ -3,6 +3,7 @@ import { Embed } from "https://raw.githubusercontent.com/harmonyland/harmony/ce4
 import { chunk, randomHexColorGen } from "./utils.ts";
 import { GitbookSpaceClient } from "./gitbook_client.ts";
 import { GitbookPage } from "./types/index.d.ts";
+import { EmbedAuthor } from "https://raw.githubusercontent.com/indiainvestments/harmony/main/deploy.ts";
 
 const { env } = Deno;
 slash.init({
@@ -97,7 +98,11 @@ slash.registerHandler("weighted", async (interaction) => {
         ephemeral: true,
       });
     }
-    embeds[0].setAuthor({name: 'Search Bot', url: 'https://ssl.gstatic.com/dynamite/emoji/png/32/emoji_u2795.png'})
+    const author: EmbedAuthor = {
+      name: interaction.user.username,
+      icon_url: interaction.user.avatarURL()
+    }
+    embeds[0].setAuthor(author)
     embeds[embeds.length - 1].setFooter(`\/weighted query: ${query.value} limit: ${limit.value} | retrieved in ${(timeTaken)} seconds`)
     return interaction.respond({
       embeds,
@@ -119,11 +124,15 @@ slash.registerHandler("list", async (interaction) => {
     const color = randomHexColor.next().value;
     const embeds: Embed[] = [];
 
+    const author: EmbedAuthor = {
+      name: interaction.user.username,
+      icon_url: interaction.user.avatarURL()
+    }
     const header = new Embed()
       .setTitle(result.title)
       .setURL(result.url)
       .setColor(color)
-      .setAuthor({name: 'Search Bot', url: 'https://ssl.gstatic.com/dynamite/emoji/png/32/emoji_u2795.png'});
+      .setAuthor(author);
 
     if (result.description && result.description !== "") {
       header.setDescription(result.description);
