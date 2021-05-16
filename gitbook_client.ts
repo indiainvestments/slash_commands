@@ -113,6 +113,12 @@ export class GitbookSpaceClient {
     }
   }
 
+  async fetchContentOfPage(path: string, variant = "main") {
+    return this.get(
+      `content/v/${variant}/url/${path.startsWith('/') ? path.slice(1) : path}`
+    );
+  }
+
   async list(query: string, variant = "main") {
     const searchSpace = await this.searchSpace(query);
     const {results: [main], timeTaken} = searchSpace;

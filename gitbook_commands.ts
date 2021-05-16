@@ -106,6 +106,7 @@ slash.registerHandler("weighted", async (interaction) => {
       embeds,
     });
   } catch (err) {
+    console.log("exception", err);
     return interaction.reply({
       content: `Something went wrong for your query: \`${query.value}\``,
       ephemeral: true,
@@ -115,6 +116,7 @@ slash.registerHandler("weighted", async (interaction) => {
 
 slash.registerHandler("list", async (interaction) => {
   console.log("list", interaction);
+  const startTime = new Date().getTime();
   const [query] = interaction.options;
   try {
     const {page: result, timeTaken} = await client.list(query.value);
@@ -154,12 +156,12 @@ slash.registerHandler("list", async (interaction) => {
       const em = new Embed().setDescription(desc).setColor(color);
       embeds.push(em);
     }
-    
     embeds[embeds.length - 1].setFooter(`\/list query: ${query.value} | retrieved in ${(timeTaken).toString().padEnd(3, '0')} seconds`)
     return interaction.respond({
       embeds,
     });
   } catch (err) {
+    console.log("exception", err);
     interaction.reply({
       content: err.message,
       ephemeral: true,
