@@ -2,7 +2,6 @@ import * as slash from "https://raw.githubusercontent.com/indiainvestments/harmo
 import { Embed } from "https://raw.githubusercontent.com/harmonyland/harmony/ce455c50c3af667a02077db5ffb79c5086510945/src/structures/embed.ts";
 import { chunk, randomHexColorGen } from "./utils.ts";
 import { GitbookSpaceClient } from "./gitbook_client.ts";
-import { GitbookPage } from "./types/index.d.ts";
 import { EmbedAuthor } from "https://raw.githubusercontent.com/indiainvestments/harmony/main/deploy.ts";
 
 const { env } = Deno;
@@ -73,26 +72,30 @@ slash.registerHandler("weighted", async (interaction) => {
     console.log("before slice", results.length);
     results = results.slice(0, limit.value);
     console.log("after slice", results.length);
-    const contents = await Promise.all(results.map(async (res) => {
-      return await client.fetchContentOfPage(res.path);
-    }));
-    
+    const contents = results;
+    // const contents = await Promise.all(results.map(async (res) => {
+    //   return await client.fetchContentOfPage(res.path);
+    // }));
+
+    console.log(contents.length);
     const embeds = [];
     const color = randomHexColor.next().value;
     const contentChunks = chunk(contents, 5);
-    
+    console.log(contentChunks.length);
+
     for (const contentChunk of contentChunks) {
       const desc = contentChunk.map((content) => {
-        return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.contentCompletePath})**\n${
-          content.description || "No description available."
-        }`
+        return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.path})**\n`
       }).join("\n\n");
       const embed = new Embed().setColor(color);
+
+      console.log("adding desc in embed", desc);
       embed.setDescription(desc);
       embeds.push(embed);
     }
 
     if (embeds.length <= 0) {
+      console.log("embeds length <= 0");
       return interaction.reply({
         content: `Nothing found for your query: \`${query.value}\``,
         ephemeral: true,
@@ -102,13 +105,13 @@ slash.registerHandler("weighted", async (interaction) => {
       name: interaction.user.username,
       icon_url: interaction.user.avatarURL()
     }
-    embeds[0].setAuthor(author)
-    embeds[embeds.length - 1].setFooter(`\/weighted query: ${query.value} limit: ${limit.value} | retrieved in ${(timeTaken)} seconds`)
+    embeds[0].setAuthor(author);
+    embeds[embeds.length - 1].setFooter(`\/weighted query: ${query.value} limit: ${limit.value} | retrieved in ${(timeTaken)} seconds`);
+    console.log("responding with embeds", embeds);
     return interaction.respond({
       embeds,
     });
   } catch (err) {
-    console.log("exception", err);
     return interaction.reply({
       content: `Something went wrong for your query: \`${query.value}\``,
       ephemeral: true,
@@ -117,7 +120,6 @@ slash.registerHandler("weighted", async (interaction) => {
 });
 
 slash.registerHandler("list", async (interaction) => {
-  console.log("list", interaction);
   const [query] = interaction.options;
   try {
     const {page: result, timeTaken} = await client.list(query.value);
@@ -140,27 +142,29 @@ slash.registerHandler("list", async (interaction) => {
 
     embeds.push(header);
 
-    const chunked = chunk(result.items, 5);
+    const limitedList = result.items.slice(0, 5);
 
-    for (const c of chunked) {
-      const desc = c
-        .map((item) => {
-          return `**[${item.title}](${item.url})**\n${
-            item.description || "No description available."
-          }`;
-        })
-        .join("\n\n");
+    let desc = limitedList
+      .map((item) => {
+        return `**[${item.title}](${item.url})**\n${
+          item.description || "No description available."
+        }`;
+      })
+      .join("\n\n");
+    if (limitedList.length >= 5) {
+      desc = `${desc}\n\n[click here more results](${client.iiGitbookBaseUrl}/?q=${encodeURI(query.value)})`;
+    }
 
+    if (desc && desc !== "") {
       const em = new Embed().setDescription(desc).setColor(color);
-
       embeds.push(em);
     }
+    
     embeds[embeds.length - 1].setFooter(`\/list query: ${query.value} | retrieved in ${(timeTaken)} seconds`)
     return interaction.respond({
       embeds,
     });
   } catch (err) {
-    console.log("exception", err);
     interaction.reply({
       content: err.message,
       ephemeral: true,
