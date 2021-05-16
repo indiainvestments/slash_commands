@@ -82,7 +82,7 @@ slash.registerHandler("weighted", async (interaction) => {
     
     for (const contentChunk of contentChunks) {
       const desc = contentChunk.map((content) => {
-        return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.path})**\n${
+        return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.contentCompletePath})**\n${
           content.description || "No description available."
         }`
       }).join("\n\n");
@@ -97,7 +97,8 @@ slash.registerHandler("weighted", async (interaction) => {
         ephemeral: true,
       });
     }
-    embeds[embeds.length - 1].setFooter(`\/weighted \`query\`: ${query.value} \`limit\`: ${limit.value} | retrieved in ${(timeTaken)} seconds`)
+    embeds[0].setAuthor({name: 'Search Bot', url: 'https://ssl.gstatic.com/dynamite/emoji/png/32/emoji_u2795.png'})
+    embeds[embeds.length - 1].setFooter(`\/weighted query: ${query.value} limit: ${limit.value} | retrieved in ${(timeTaken)} seconds`)
     return interaction.respond({
       embeds,
     });
@@ -121,7 +122,8 @@ slash.registerHandler("list", async (interaction) => {
     const header = new Embed()
       .setTitle(result.title)
       .setURL(result.url)
-      .setColor(color);
+      .setColor(color)
+      .setAuthor({name: 'Search Bot', url: 'https://ssl.gstatic.com/dynamite/emoji/png/32/emoji_u2795.png'});
 
     if (result.description && result.description !== "") {
       header.setDescription(result.description);
@@ -144,7 +146,7 @@ slash.registerHandler("list", async (interaction) => {
 
       embeds.push(em);
     }
-    embeds[embeds.length - 1].setFooter(`\/list \`query\`: ${query.value} | retrieved in ${(timeTaken)} seconds`)
+    embeds[embeds.length - 1].setFooter(`\/list query: ${query.value} | retrieved in ${(timeTaken)} seconds`)
     return interaction.respond({
       embeds,
     });

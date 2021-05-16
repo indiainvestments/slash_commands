@@ -104,9 +104,13 @@ export class GitbookSpaceClient {
   }
 
   async fetchContentOfPage(path: string, variant = "main") {
-    return this.get(
+    const content: GitbookPage = await this.get(
       `content/v/${variant}/url/${path.startsWith('/') ? path.slice(1) : path}`
     );
+    return {
+      ...content,
+      contentCompletePath: `${path.startsWith('/') ? path.slice(1) : path}`
+    }
   }
 
   async list(query: string, variant = "main") {
