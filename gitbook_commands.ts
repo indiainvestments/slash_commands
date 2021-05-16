@@ -1,4 +1,4 @@
-import * as slash from "https://raw.githubusercontent.com/dwight-schrute/harmony/slashTest/deploy.ts";
+import * as slash from "https://raw.githubusercontent.com/indiainvestments/harmony/main/deploy.ts";
 import { Embed } from "https://raw.githubusercontent.com/harmonyland/harmony/ce455c50c3af667a02077db5ffb79c5086510945/src/structures/embed.ts";
 import { chunk, randomHexColorGen } from "./utils.ts";
 import { GitbookSpaceClient } from "./gitbook_client.ts";
@@ -58,6 +58,7 @@ if (commands.size !== COMMANDS_SIZE) {
 }
 
 slash.registerHandler("weighted", async (interaction) => {
+  console.log("weighted", interaction);
   const [query, limit] = interaction.options;
   try {
     const results = await client.searchSpace(query.value);
@@ -86,6 +87,7 @@ slash.registerHandler("weighted", async (interaction) => {
 });
 
 slash.registerHandler("list", async (interaction) => {
+  console.log("list", interaction);
   const [query] = interaction.options;
   try {
     const result = await client.list(query.value);
