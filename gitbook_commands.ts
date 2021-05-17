@@ -65,7 +65,6 @@ if (commands.size !== COMMANDS_SIZE) {
 slash.registerHandler("weighted", async (interaction) => {
   const [query, limit = {value: 1}] = interaction.options;
   try {
-    console.log("weighted command");
     let {results, timeTaken} = await client.searchSpace(query.value);
     if (!results.length) {
       return interaction.reply({
@@ -107,7 +106,6 @@ slash.registerHandler("weighted", async (interaction) => {
       embeds,
     });
   } catch (err) {
-    console.log("error in weighted", err);
     return interaction.reply({
       content: `Something went wrong for your query: \`${query.value}\``,
       ephemeral: true,
