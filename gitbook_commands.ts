@@ -1,4 +1,4 @@
-import * as slash from "https://raw.githubusercontent.com/indiainvestments/harmony/main/deploy.ts";
+import * as slash from "https://raw.githubusercontent.com/dwight-schrute/harmony/slashTest/deploy.ts";
 import { Embed } from "https://raw.githubusercontent.com/harmonyland/harmony/ce455c50c3af667a02077db5ffb79c5086510945/src/structures/embed.ts";
 import { chunk, randomHexColorGen } from "./utils.ts";
 import { GitbookSpaceClient } from "./gitbook_client.ts";
@@ -108,6 +108,7 @@ slash.registerHandler("weighted", async (interaction) => {
       embeds,
     });
   } catch (err) {
+    console.log("error in weighted", err);
     return interaction.reply({
       content: `Something went wrong for your query: \`${query.value}\``,
       ephemeral: true,
