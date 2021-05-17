@@ -46,6 +46,7 @@ export interface GitbookPage {
   kind: "document" | "group";
   path: string;
   pages: GitbookPage[] | never;
+  contentCompletePath?: string;
 }
 
 export interface GitbookContent {

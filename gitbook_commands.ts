@@ -1,7 +1,8 @@
-import * as slash from "https://raw.githubusercontent.com/dwight-schrute/harmony/slashTest/deploy.ts";
+import * as slash from "https://raw.githubusercontent.com/indiainvestments/harmony/main/deploy.ts";
 import { Embed } from "https://raw.githubusercontent.com/harmonyland/harmony/ce455c50c3af667a02077db5ffb79c5086510945/src/structures/embed.ts";
 import { chunk, randomHexColorGen } from "./utils.ts";
 import { GitbookSpaceClient } from "./gitbook_client.ts";
+import { EmbedAuthor } from "https://raw.githubusercontent.com/indiainvestments/harmony/main/deploy.ts";
 
 const { env } = Deno;
 slash.init({
@@ -58,28 +59,53 @@ if (commands.size !== COMMANDS_SIZE) {
 }
 
 slash.registerHandler("weighted", async (interaction) => {
-  const [query, limit] = interaction.options;
+  const [query, limit = {value: 1}] = interaction.options;
   try {
-    const results = await client.searchSpace(query.value);
+    let {results, timeTaken} = await client.searchSpace(query.value);
     if (!results.length) {
       return interaction.reply({
         content: `Nothing found for your query: \`${query.value}\``,
         ephemeral: true,
       });
     }
+    results = results.slice(0, limit.value);
+    const contents = await Promise.all(results.map(async (res) => {
+      return await client.fetchContentOfPage(res.path);
+    }));
 
-    if (limit) {
-      return interaction.reply(
-        results
-          .slice(0, limit.value)
-          .map((item) => item.url)
-          .join("\n")
-      );
+    const embeds = [];
+    const color = randomHexColor.next().value;
+    const contentChunks = chunk(contents, 5);
+
+    for (const contentChunk of contentChunks) {
+      const desc = contentChunk.map((content) => {
+        return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.contentCompletePath})**\n${
+          content.description || "No description available."
+        }`
+      }).join("\n\n");
+      const embed = new Embed().setColor(color);
+      embed.setDescription(desc);
+      embeds.push(embed);
     }
-    return interaction.reply(results[0].url);
+
+    if (embeds.length <= 0) {
+      return interaction.reply({
+        content: `Nothing found for your query: \`${query.value}\``,
+        ephemeral: true,
+      });
+    }
+    const author: EmbedAuthor = {
+      name: interaction.user.username,
+      icon_url: interaction.user.avatarURL()
+    }
+    embeds[0].setAuthor(author);
+    embeds[embeds.length - 1].setFooter(`\/weighted query: ${query.value} limit: ${limit.value} | retrieved in ${(timeTaken)} seconds`);
+    return interaction.respond({
+      embeds,
+    });
   } catch (err) {
     return interaction.reply({
-      content: "Something went wrong",
+      content: `Something went wrong for your query: \`${query.value}\``,
       ephemeral: true,
     });
   }
@@ -88,14 +114,19 @@ slash.registerHandler("weighted", async (interaction) => {
 slash.registerHandler("list", async (interaction) => {
   const [query] = interaction.options;
   try {
-    const result = await client.list(query.value);
+    const {page: result, timeTaken} = await client.list(query.value);
     const color = randomHexColor.next().value;
     const embeds: Embed[] = [];
 
+    const author: EmbedAuthor = {
+      name: interaction.user.username,
+      icon_url: interaction.user.avatarURL()
+    }
     const header = new Embed()
       .setTitle(result.title)
       .setURL(result.url)
-      .setColor(color);
+      .setColor(color)
+      .setAuthor(author);
 
     if (result.description && result.description !== "") {
       header.setDescription(result.description);
@@ -103,22 +134,25 @@ slash.registerHandler("list", async (interaction) => {
 
     embeds.push(header);
 
-    const chunked = chunk(result.items, 5);
+    const limitedList = result.items.slice(0, 5);
 
-    for (const c of chunked) {
-      const desc = c
-        .map((item) => {
-          return `**[${item.title}](${item.url})**\n${
-            item.description || "No description available."
-          }`;
-        })
-        .join("\n\n");
-
-      const em = new Embed().setDescription(desc).setColor(color);
-
-      embeds.push(em);
+    let desc = limitedList
+      .map((item) => {
+        return `**[${item.title}](${item.url})**\n${
+          item.description || "No description available."
+        }`;
+      })
+      .join("\n\n");
+    if (limitedList.length >= 5) {
+      desc = `${desc}\n\n[click here more results](${client.iiGitbookBaseUrl}/?q=${encodeURI(query.value)})`;
     }
 
+    if (desc && desc !== "") {
+      const em = new Embed().setDescription(desc).setColor(color);
+      embeds.push(em);
+    }
+    
+    embeds[embeds.length - 1].setFooter(`\/list query: ${query.value} | retrieved in ${(timeTaken)} seconds`)
     return interaction.respond({
       embeds,
     });

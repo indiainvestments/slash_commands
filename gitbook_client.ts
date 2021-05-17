@@ -78,11 +78,13 @@ export class GitbookSpaceClient {
   }
 
   async searchSpace(query: string) {
-    const { results } = (await this.get(
+    const startTime = new Date().getTime();
+    let { results } = (await this.get(
       "search",
       new URLSearchParams({ query })
     )) as { results: GitbookSearchNode[] };
-    return results
+    const timeTaken = (new Date().getTime() - startTime) / (1000);
+    results = results
       .map((item) => {
         return {
           ...item,
@@ -95,18 +97,30 @@ export class GitbookSpaceClient {
         const weightB = getWeightOfPath(b.path);
         return weightB - weightA;
       });
+    return {
+      results,
+      timeTaken
+    }
+  }
+
+  async fetchContentOfPage(path: string, variant = "main") {
+    const content: GitbookPage = await this.get(
+      `content/v/${variant}/url/${path.startsWith('/') ? path.slice(1) : path}`
+    );
+    return {
+      ...content,
+      contentCompletePath: `${path.startsWith('/') ? path.slice(1) : path}`
+    }
   }
 
   async list(query: string, variant = "main") {
     const searchSpace = await this.searchSpace(query);
-    const [main] = searchSpace;
+    const {results: [main], timeTaken} = searchSpace;
     if (!main) {
       throw new Error(`No results found for query: ${query}`);
     }
-    const content: GitbookPage = await this.get(
-      `content/v/${variant}/url/${main.path}`
-    );
-    return {
+    const content: GitbookPage = await this.fetchContentOfPage(main.path);
+    const page = {
       title: content.title,
       description: content.description,
       url: main.url,
@@ -118,5 +132,9 @@ export class GitbookSpaceClient {
         };
       }),
     };
+    return {
+      page,
+      timeTaken
+    }
   }
 }
