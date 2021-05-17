@@ -86,14 +86,11 @@ slash.registerHandler("weighted", async (interaction) => {
         }`
       }).join("\n\n");
       const embed = new Embed().setColor(color);
-
-      console.log("adding desc in embed", desc);
       embed.setDescription(desc);
       embeds.push(embed);
     }
 
     if (embeds.length <= 0) {
-      console.log("embeds length <= 0");
       return interaction.reply({
         content: `Nothing found for your query: \`${query.value}\``,
         ephemeral: true,
