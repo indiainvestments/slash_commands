@@ -23,10 +23,3 @@ export function chunk<T>(arr: T[], k: number) {
   }
   return chunks;
 }
-
-export async function fetchAndSave(list: GitbookPage[], results: any[], client: GitbookSpaceClient) {
-  for (const res of results) {
-      const data = await client.fetchContentOfPage(res.path);
-      list.push(data);
-  }
-}

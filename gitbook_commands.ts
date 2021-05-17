@@ -1,6 +1,6 @@
 import * as slash from "https://raw.githubusercontent.com/indiainvestments/harmony/main/deploy.ts";
 import { Embed } from "https://raw.githubusercontent.com/harmonyland/harmony/ce455c50c3af667a02077db5ffb79c5086510945/src/structures/embed.ts";
-import { chunk, fetchAndSave, randomHexColorGen } from "./utils.ts";
+import { chunk, randomHexColorGen } from "./utils.ts";
 import { GitbookSpaceClient } from "./gitbook_client.ts";
 import { EmbedAuthor } from "https://raw.githubusercontent.com/indiainvestments/harmony/main/deploy.ts";
 import { GitbookSearchNode } from "./types/index.d.ts";
@@ -65,7 +65,6 @@ if (commands.size !== COMMANDS_SIZE) {
 slash.registerHandler("weighted", async (interaction) => {
   const [query, limit = {value: 1}] = interaction.options;
   try {
-    console.log("weighted command");
     let {results, timeTaken} = await client.searchSpace(query.value);
     if (!results.length) {
       return interaction.reply({
@@ -107,7 +106,6 @@ slash.registerHandler("weighted", async (interaction) => {
       embeds,
     });
   } catch (err) {
-    console.log("error in weighted", err);
     return interaction.reply({
       content: `Something went wrong for your query: \`${query.value}\``,
       ephemeral: true,
