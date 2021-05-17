@@ -3,8 +3,8 @@ import { Embed } from "https://raw.githubusercontent.com/harmonyland/harmony/ce4
 import { chunk, fetchAndSave, randomHexColorGen } from "./utils.ts";
 import { GitbookSpaceClient } from "./gitbook_client.ts";
 import { EmbedAuthor } from "https://raw.githubusercontent.com/indiainvestments/harmony/main/deploy.ts";
-import { delay } from 'https://deno.land/x/delay@v0.2.0/mod.ts';
-import { GitbookPage } from "./types/index.d.ts";
+import { GitbookSearchNode } from "./types/index.d.ts";
+import { Cache } from "./cache/page_desc_cache.ts";
 
 const { env } = Deno;
 slash.init({
@@ -24,6 +24,8 @@ const client = new GitbookSpaceClient(GITBOOK_TOKEN, {
   gitbookApiUrl: GITBOOK_API_URL,
 });
 
+const cache = new Cache(client);
+await cache.fillData();
 const commands = await slash.commands.all();
 // Create Slash Commands
 if (commands.size !== COMMANDS_SIZE) {
@@ -59,9 +61,8 @@ if (commands.size !== COMMANDS_SIZE) {
     },
   ]);
 }
-let fetchedList: GitbookPage[] = [];
+
 slash.registerHandler("weighted", async (interaction) => {
-  fetchedList = [];
   const [query, limit = {value: 1}] = interaction.options;
   try {
     console.log("weighted command");
@@ -73,41 +74,16 @@ slash.registerHandler("weighted", async (interaction) => {
       });
     }
     results = results.slice(0, limit.value);
-    // const contentsPromise = (results.map(async (res) => {
-    //   return await client.fetchContentOfPage(res.path);
-    // }));
-    
-    console.log("calling api calls");
-    let resultsAfterTimeout;
-    try {
-      resultsAfterTimeout = await Promise.race([delay(1500), fetchAndSave(fetchedList, results, client)]);
-    } catch (e) {
-      console.log("error in fetch loop", e);
-    }
-    if (!resultsAfterTimeout) {
-      console.log("timeout");
-      console.log(fetchedList);
-    } else {
-      console.log("fetched all before timeout");
-      console.log(fetchedList);
-    }
-
-    if (fetchedList.length == 0) {
-      console.log("fetchedlist = 0");
-      return interaction.reply({
-        content: `Something went wrong for your query: \`${query.value}\``,
-        ephemeral: true,
-      });
-    }
 
     const embeds = [];
     const color = randomHexColor.next().value;
-    const contentChunks = chunk(fetchedList, 5);
+    const contentChunks = chunk(results, 5);
 
     for (const contentChunk of contentChunks) {
-      const desc = contentChunk.map((content: GitbookPage) => {
-        return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.contentCompletePath})**\n${
-          content.description || "No description available."
+      const desc = contentChunk.map((content: GitbookSearchNode) => {
+        const description = cache.getValue(content.path);
+        return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.path})**\n${
+          description ?? "No description available."
         }`
       }).join("\n\n");
       const embed = new Embed().setColor(color);
@@ -136,8 +112,6 @@ slash.registerHandler("weighted", async (interaction) => {
       content: `Something went wrong for your query: \`${query.value}\``,
       ephemeral: true,
     });
-  } finally {
-    fetchedList = [];
   }
 });
 
