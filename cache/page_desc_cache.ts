@@ -1,6 +1,6 @@
 import { GitbookSpaceClient } from "../gitbook_client.ts";
 import { GitbookContent, GitbookPage } from "../types/index.d.ts";
-
+const CACHE_TTL = 60 * 60 * 1000;
 export class Cache {
   private data: Record<string, string> = {};
   private client: GitbookSpaceClient;
@@ -19,7 +19,7 @@ export class Cache {
     setInterval(async () => {
       console.log("refreshing cache");
       await this.fillData();
-    }, 60 * 60 * 1000);
+    }, CACHE_TTL);
   }
 
   public getValue(path: string) {
