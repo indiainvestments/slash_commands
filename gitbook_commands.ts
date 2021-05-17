@@ -3,6 +3,8 @@ import { Embed } from "https://raw.githubusercontent.com/harmonyland/harmony/ce4
 import { chunk, randomHexColorGen } from "./utils.ts";
 import { GitbookSpaceClient } from "./gitbook_client.ts";
 import { EmbedAuthor } from "https://raw.githubusercontent.com/indiainvestments/harmony/main/deploy.ts";
+import { GitbookSearchNode } from "./types/index.d.ts";
+import { Cache } from "./cache/page_desc_cache.ts";
 
 const { env } = Deno;
 slash.init({
@@ -10,10 +12,10 @@ slash.init({
 });
 
 const COMMANDS_SIZE = 2;
-const GITBOOK_SPACE_ID = env.get("GITBOOK_SPACE_ID")!;
-const GITBOOK_TOKEN = env.get("GITBOOK_TOKEN")!;
-const GITBOOK_API_URL = env.get("GITBOOK_API_URL")!;
-const GITBOOK_NAME = env.get("GITBOOK_NAME")!;
+const GITBOOK_SPACE_ID = env.get("GITBOOK_SPACE_ID") ?? '';
+const GITBOOK_TOKEN = env.get("GITBOOK_TOKEN") ?? '';
+const GITBOOK_API_URL = env.get("GITBOOK_API_URL") ?? '';
+const GITBOOK_NAME = env.get("GITBOOK_NAME");
 
 const randomHexColor = randomHexColorGen();
 
@@ -22,6 +24,8 @@ const client = new GitbookSpaceClient(GITBOOK_TOKEN, {
   gitbookApiUrl: GITBOOK_API_URL,
 });
 
+const cache = new Cache(client);
+await cache.fillData();
 const commands = await slash.commands.all();
 // Create Slash Commands
 if (commands.size !== COMMANDS_SIZE) {
@@ -69,18 +73,16 @@ slash.registerHandler("weighted", async (interaction) => {
       });
     }
     results = results.slice(0, limit.value);
-    const contents = await Promise.all(results.map(async (res) => {
-      return await client.fetchContentOfPage(res.path);
-    }));
 
     const embeds = [];
     const color = randomHexColor.next().value;
-    const contentChunks = chunk(contents, 5);
+    const contentChunks = chunk(results, 5);
 
     for (const contentChunk of contentChunks) {
-      const desc = contentChunk.map((content) => {
-        return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.contentCompletePath})**\n${
-          content.description || "No description available."
+      const desc = contentChunk.map((content: GitbookSearchNode) => {
+        const description = cache.getValue(content.uid);
+        return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.path})**\n${
+          (description && description !== "") ? description : "No description available."
         }`
       }).join("\n\n");
       const embed = new Embed().setColor(color);
@@ -99,7 +101,7 @@ slash.registerHandler("weighted", async (interaction) => {
       icon_url: interaction.user.avatarURL()
     }
     embeds[0].setAuthor(author);
-    embeds[embeds.length - 1].setFooter(`\/weighted query: ${query.value} limit: ${limit.value} | retrieved in ${(timeTaken)} seconds`);
+    embeds[embeds.length - 1].setFooter(`\/weighted query: ${query.value} limit: ${limit.value} | retrieved in ${(timeTaken).toString().padEnd(3, '0')} seconds`);
     return interaction.respond({
       embeds,
     });
@@ -152,7 +154,7 @@ slash.registerHandler("list", async (interaction) => {
       embeds.push(em);
     }
     
-    embeds[embeds.length - 1].setFooter(`\/list query: ${query.value} | retrieved in ${(timeTaken)} seconds`)
+    embeds[embeds.length - 1].setFooter(`\/list query: ${query.value} | retrieved in ${(timeTaken).toString().padEnd(3, '0')} seconds`)
     return interaction.respond({
       embeds,
     });

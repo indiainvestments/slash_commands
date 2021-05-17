@@ -78,12 +78,12 @@ export class GitbookSpaceClient {
   }
 
   async searchSpace(query: string) {
-    const startTime = new Date().getTime();
+    const startTime = Date.now();
     let { results } = (await this.get(
       "search",
       new URLSearchParams({ query })
     )) as { results: GitbookSearchNode[] };
-    const timeTaken = (new Date().getTime() - startTime) / (1000);
+    const timeTaken = (Date.now() - startTime) / (1000);
     results = results
       .map((item) => {
         return {
