@@ -1,4 +1,4 @@
-import * as slash from "https://raw.githubusercontent.com/indiainvestments/harmony/main/deploy.ts";
+import * as slash from "https://raw.githubusercontent.com/dwight-schrute/harmony/slashTest/deploy.ts";
 import { Embed } from "https://raw.githubusercontent.com/harmonyland/harmony/ce455c50c3af667a02077db5ffb79c5086510945/src/structures/embed.ts";
 import { chunk, fetchAndSave, randomHexColorGen } from "./utils.ts";
 import { GitbookSpaceClient } from "./gitbook_client.ts";
@@ -78,7 +78,12 @@ slash.registerHandler("weighted", async (interaction) => {
     // }));
     
     console.log("calling api calls");
-    const resultsAfterTimeout = await Promise.race([delay(5000), fetchAndSave(fetchedList, results, client)]);
+    let resultsAfterTimeout;
+    try {
+      resultsAfterTimeout = await Promise.race([delay(2000), fetchAndSave(fetchedList, results, client)]);
+    } catch (e) {
+      console.log("error in fetch loop", e);
+    }
     if (!resultsAfterTimeout) {
       console.log("timeout");
       console.log(fetchedList);
@@ -121,11 +126,12 @@ slash.registerHandler("weighted", async (interaction) => {
       icon_url: interaction.user.avatarURL()
     }
     embeds[0].setAuthor(author);
-    embeds[embeds.length - 1].setFooter(`\/weighted query: ${query.value} limit: ${limit.value} | retrieved in ${(timeTaken)} seconds`);
+    embeds[embeds.length - 1].setFooter(`\/weighted query: ${query.value} limit: ${limit.value} | retrieved in ${(timeTaken).toString().padEnd(3, '0')} seconds`);
     return interaction.respond({
       embeds,
     });
   } catch (err) {
+    console.log("error in weighted", err);
     return interaction.reply({
       content: `Something went wrong for your query: \`${query.value}\``,
       ephemeral: true,
@@ -176,7 +182,7 @@ slash.registerHandler("list", async (interaction) => {
       embeds.push(em);
     }
     
-    embeds[embeds.length - 1].setFooter(`\/list query: ${query.value} | retrieved in ${(timeTaken)} seconds`)
+    embeds[embeds.length - 1].setFooter(`\/list query: ${query.value} | retrieved in ${(timeTaken).toString().padEnd(3, '0')} seconds`)
     return interaction.respond({
       embeds,
     });
