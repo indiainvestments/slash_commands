@@ -12,10 +12,10 @@ slash.init({
 });
 
 const COMMANDS_SIZE = 2;
-const GITBOOK_SPACE_ID = env.get("GITBOOK_SPACE_ID")!;
-const GITBOOK_TOKEN = env.get("GITBOOK_TOKEN")!;
-const GITBOOK_API_URL = env.get("GITBOOK_API_URL")!;
-const GITBOOK_NAME = env.get("GITBOOK_NAME")!;
+const GITBOOK_SPACE_ID = env.get("GITBOOK_SPACE_ID") ?? '';
+const GITBOOK_TOKEN = env.get("GITBOOK_TOKEN") ?? '';
+const GITBOOK_API_URL = env.get("GITBOOK_API_URL") ?? '';
+const GITBOOK_NAME = env.get("GITBOOK_NAME");
 
 const randomHexColor = randomHexColorGen();
 
