@@ -1,3 +1,5 @@
+import {GitbookSpaceClient} from './gitbook_client.ts';
+import { GitbookPage } from "./types/index.d.ts";
 // Yields random bright colors which should look good on discord.
 export function* randomHexColorGen(): Generator<string> {
   while (true) {
@@ -20,4 +22,11 @@ export function chunk<T>(arr: T[], k: number) {
     chunks.push(arr.slice(idx, idx + k));
   }
   return chunks;
+}
+
+export async function fetchAndSave(list: GitbookPage[], results: any[], client: GitbookSpaceClient) {
+  for (const res of results) {
+      const data = await client.fetchContentOfPage(res.path);
+      list.push(data);
+  }
 }
