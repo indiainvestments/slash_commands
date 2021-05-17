@@ -61,9 +61,8 @@ if (commands.size !== COMMANDS_SIZE) {
     },
   ]);
 }
-let fetchedList: GitbookPage[] = [];
+
 slash.registerHandler("weighted", async (interaction) => {
-  fetchedList = [];
   const [query, limit = {value: 1}] = interaction.options;
   try {
     console.log("weighted command");
@@ -113,8 +112,6 @@ slash.registerHandler("weighted", async (interaction) => {
       content: `Something went wrong for your query: \`${query.value}\``,
       ephemeral: true,
     });
-  } finally {
-    fetchedList = [];
   }
 });
 
