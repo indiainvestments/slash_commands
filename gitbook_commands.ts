@@ -81,7 +81,7 @@ slash.registerHandler("weighted", async (interaction) => {
 
     for (const contentChunk of contentChunks) {
       const desc = contentChunk.map((content: GitbookSearchNode) => {
-        const description = cache.getValue(content.path);
+        const description = cache.getValue(content.uid);
         return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.path})**\n${
           description ?? "No description available."
         }`

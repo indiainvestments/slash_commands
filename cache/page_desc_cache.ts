@@ -12,13 +12,13 @@ export class Cache {
   public fillData = async () => {
     const bookContent: GitbookContent = await this.client.get('content');
     const page: GitbookPage = bookContent.variants[0].page;
-    this.fillCacheRecursively(page, '');
-    console.log(this.data);
+    this.fillCacheRecursively(page);
   }
 
   private setUpTimer = () => {
-    setInterval(() => {
-      this.fillData();
+    setInterval(async () => {
+      console.log("refreshing cache");
+      await this.fillData();
     }, 60 * 60 * 1000);
   }
 
@@ -26,13 +26,11 @@ export class Cache {
     return this.data[path];
   }
 
-  private fillCacheRecursively = (page: GitbookPage, parentPath: string) => {
-    const pagePath = page.path === 'undefined' ? '' : page.path;
-    const currentPath = `${parentPath}/${pagePath}`;
-    this.data[currentPath] = page.description;
+  private fillCacheRecursively = (page: GitbookPage) => {
+    this.data[page.uid] = page.description;
     if (page.pages.length === 0) return;
     for (const pg of page.pages) {
-      this.fillCacheRecursively(pg, currentPath === '/' ? '' : currentPath);
+      this.fillCacheRecursively(pg);
     }
   }
 }
