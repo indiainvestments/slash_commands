@@ -80,7 +80,7 @@ slash.registerHandler("weighted", async (interaction) => {
     console.log("calling api calls");
     let resultsAfterTimeout;
     try {
-      resultsAfterTimeout = await Promise.race([delay(2000), fetchAndSave(fetchedList, results, client)]);
+      resultsAfterTimeout = await Promise.race([delay(1000), fetchAndSave(fetchedList, results, client)]);
     } catch (e) {
       console.log("error in fetch loop", e);
     }
@@ -95,7 +95,7 @@ slash.registerHandler("weighted", async (interaction) => {
     if (fetchedList.length == 0) {
       console.log("fetchedlist = 0");
       return interaction.reply({
-        content: `Nothing found for your query: \`${query.value}\``,
+        content: `Something went wrong for your query: \`${query.value}\``,
         ephemeral: true,
       });
     }
