@@ -107,7 +107,6 @@ export class GitbookSpaceClient {
     const content: GitbookPage = await this.get(
       `content/v/${variant}/url/${path.startsWith('/') ? path.slice(1) : path}`
     );
-    console.log("received fetch for path", path);
     return {
       ...content,
       contentCompletePath: `${path.startsWith('/') ? path.slice(1) : path}`
@@ -121,7 +120,6 @@ export class GitbookSpaceClient {
       throw new Error(`No results found for query: ${query}`);
     }
     const content: GitbookPage = await this.fetchContentOfPage(main.path);
-    console.log(content);
     const page = {
       title: content.title,
       description: content.description,

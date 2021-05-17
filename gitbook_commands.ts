@@ -59,7 +59,6 @@ if (commands.size !== COMMANDS_SIZE) {
 }
 
 slash.registerHandler("weighted", async (interaction) => {
-  console.log("weighted", interaction);
   const [query, limit = {value: 1}] = interaction.options;
   try {
     let {results, timeTaken} = await client.searchSpace(query.value);
@@ -69,33 +68,27 @@ slash.registerHandler("weighted", async (interaction) => {
         ephemeral: true,
       });
     }
-    console.log("before slice", results.length);
     results = results.slice(0, limit.value);
-    console.log("after slice", results.length);
-    const contents = results;
-    // const contents = await Promise.all(results.map(async (res) => {
-    //   return await client.fetchContentOfPage(res.path);
-    // }));
+    const contents = await Promise.all(results.map(async (res) => {
+      return await client.fetchContentOfPage(res.path);
+    }));
 
-    console.log(contents.length);
     const embeds = [];
     const color = randomHexColor.next().value;
     const contentChunks = chunk(contents, 5);
-    console.log(contentChunks.length);
 
     for (const contentChunk of contentChunks) {
       const desc = contentChunk.map((content) => {
-        return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.path})**\n`
+        return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.contentCompletePath})**\n${
+          content.description || "No description available."
+        }`
       }).join("\n\n");
       const embed = new Embed().setColor(color);
-
-      console.log("adding desc in embed", desc);
       embed.setDescription(desc);
       embeds.push(embed);
     }
 
     if (embeds.length <= 0) {
-      console.log("embeds length <= 0");
       return interaction.reply({
         content: `Nothing found for your query: \`${query.value}\``,
         ephemeral: true,
@@ -107,7 +100,6 @@ slash.registerHandler("weighted", async (interaction) => {
     }
     embeds[0].setAuthor(author);
     embeds[embeds.length - 1].setFooter(`\/weighted query: ${query.value} limit: ${limit.value} | retrieved in ${(timeTaken)} seconds`);
-    console.log("responding with embeds", embeds);
     return interaction.respond({
       embeds,
     });
