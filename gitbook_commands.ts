@@ -80,7 +80,7 @@ slash.registerHandler("weighted", async (interaction) => {
     console.log("calling api calls");
     let resultsAfterTimeout;
     try {
-      resultsAfterTimeout = await Promise.race([delay(1000), fetchAndSave(fetchedList, results, client)]);
+      resultsAfterTimeout = await Promise.race([delay(1500), fetchAndSave(fetchedList, results, client)]);
     } catch (e) {
       console.log("error in fetch loop", e);
     }
