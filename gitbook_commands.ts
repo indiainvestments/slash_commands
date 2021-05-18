@@ -74,9 +74,6 @@ slash.registerHandler("weighted", async (interaction) => {
     }
     results = results.slice(0, limit.value);
 
-    console.log("weighted command");
-    console.log(results);
-
     const embeds = [];
     const color = randomHexColor.next().value;
     const contentChunks = chunk(results, 5);
@@ -120,8 +117,6 @@ slash.registerHandler("list", async (interaction) => {
   const [query] = interaction.options;
   try {
     const {page: result, timeTaken} = await client.list(query.value);
-    console.log("list command");
-    console.log(result);
     const color = randomHexColor.next().value;
     const embeds: Embed[] = [];
 

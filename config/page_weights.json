@@ -6,9 +6,5 @@
   {
     "path": "/contributors/.*",
     "weight": 0.5
-  },
-  {
-    "path": "faqs/.*",
-    "weight": 0.9
   }
 ]
