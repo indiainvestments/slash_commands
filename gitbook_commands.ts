@@ -28,7 +28,6 @@ await cache.fillData();
 slash.registerHandler("wiki", async (interaction) => {
   const [query] = interaction.options;
   try {
-    console.log("wiki search", query);
     let {results, timeTaken} = await client.searchSpace(query.value);
     if (!results.length) {
       return interaction.reply({
@@ -41,24 +40,21 @@ slash.registerHandler("wiki", async (interaction) => {
 
     const embeds = [];
     const color = randomHexColor.next().value;
-    // const contentChunks = chunk(results, 5);
 
-    // for (const contentChunk of contentChunks) {
     let desc = results.map((content: GitbookSearchNode) => {
       const description = cache.getValue(content.uid);
       return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.path})**\n${
         (description && description !== "") ? description : "No description available."
       }`
     }).join("\n\n");
-    console.log("5 desc", desc);
     if (resultsSize > 5) {
-      desc = `${desc}\n\n[click here more results](${client.iiGitbookBaseUrl}/?q=${encodeURI(query.value)})`;
-      console.log("> 5 desc", desc);
+      desc = `${desc}\n\n[click here more results from our wiki](${client.iiGitbookBaseUrl}/?q=${encodeURI(query.value)})`;
     }
-    const embed = new Embed().setColor(color);
-    embed.setDescription(desc);
+    const embed = new Embed()
+      .setColor(color)
+      .setDescription(desc)
+      .setThumbnail('https://i.imgur.com/kSxwaQA.png');
     embeds.push(embed);
-    // }
 
     if (embeds.length <= 0) {
       return interaction.reply({
