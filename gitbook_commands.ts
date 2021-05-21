@@ -64,7 +64,7 @@ slash.registerHandler("wiki", async (interaction) => {
     }
     const author: EmbedAuthor = {
       name: interaction.user.username,
-      icon_url: interaction.user.avatarURL()
+      "icon_url": interaction.user.avatarURL()
     }
     embeds[0].setAuthor(author);
     embeds[embeds.length - 1].setFooter(`\/wiki query: ${query.value} | retrieved in ${(timeTaken).toString().padEnd(3, '0')} seconds`);
@@ -72,6 +72,7 @@ slash.registerHandler("wiki", async (interaction) => {
       embeds,
     });
   } catch (err) {
+    console.error("Error in handling wiki command", err);
     return interaction.reply({
       content: `Something went wrong for your query: \`${query.value}\``,
       ephemeral: true,
