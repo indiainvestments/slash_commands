@@ -1,3 +1,4 @@
+import { DEFAUL_API_VERSION, DEFAUL_WIKI_BASE_URL} from "./constants.ts";
 import {
   GitbookClientOptions,
   GitbookContent,
@@ -6,8 +7,9 @@ import {
   GitbookSpace,
   PathWeight,
 } from "./types/index.d.ts";
+import { getGitbookSpaceUrl, getWeightOfPath } from "./utils.ts";
 
-let pathToFile = "config/page_weights.json";
+const pathToFile = "config/page_weights.json";
 let WEIGHTS: PathWeight[] = [];
 try {
   const data = await fetch(new URL(pathToFile, import.meta.url));
@@ -17,24 +19,13 @@ try {
   console.warn(`Error fetching ${pathToFile}, weights will be default`, err);
 }
 
-const getWeightOfPath = (path: string): number => {
-  const searchPath = path.startsWith("/") ? path.slice(1) : path;
-  const pathValue = WEIGHTS.find((val, _) => {
-    const valPath = val.path;
-    return searchPath.match(
-      new RegExp(`^${valPath.startsWith("/") ? valPath.slice(1) : valPath}$`)
-    );
-  });
-  return pathValue?.weight ?? 1.0;
-};
-
 export class GitbookSpaceClient {
   public apiUrl: string;
   public spaceId: string;
   public headers: Headers;
   public version: string;
-  public iiGitbookBaseUrl: string =
-    "https://indiainvestments.gitbook.io/content";
+  public iiGitbookBaseUrl: string = DEFAUL_WIKI_BASE_URL;
+
   constructor(
     token: string,
     { spaceId, gitbookApiUrl, version }: GitbookClientOptions
@@ -44,27 +35,14 @@ export class GitbookSpaceClient {
     this.apiUrl = gitbookApiUrl.endsWith("/")
       ? gitbookApiUrl.slice(0, -1)
       : gitbookApiUrl;
-    this.version = version ?? "v1";
+    this.version = version ?? DEFAUL_API_VERSION;
     const headers = new Headers();
     headers.set("Authorization", `Bearer ${token}`);
     this.headers = headers;
   }
 
-  getSpaceUrl(path = "/", params?: URLSearchParams) {
-    // trim beginning slash
-    const rest = path.startsWith("/") ? path.slice(1, path.length) : path;
-    const url = new URL(
-      `${this.version}/spaces/${this.spaceId}/${rest}`,
-      this.apiUrl
-    );
-    if (params) {
-      url.search = params.toString();
-    }
-    return url;
-  }
-
   async get(path = "/", params?: URLSearchParams) {
-    const url = this.getSpaceUrl(path, params);
+    const url = getGitbookSpaceUrl(this.apiUrl, this.version, this.spaceId, path, params);
     const response = await fetch(url, { headers: this.headers });
     return response.json();
   }
@@ -93,8 +71,8 @@ export class GitbookSpaceClient {
         };
       })
       .sort((a, b) => {
-        const weightA = getWeightOfPath(a.path);
-        const weightB = getWeightOfPath(b.path);
+        const weightA = getWeightOfPath(a.path, WEIGHTS);
+        const weightB = getWeightOfPath(b.path, WEIGHTS);
         return weightB - weightA;
       });
     return {
@@ -119,7 +97,7 @@ export class GitbookSpaceClient {
     if (!main) {
       throw new Error(`No results found for query: ${query}`);
     }
-    const content: GitbookPage = await this.fetchContentOfPage(main.path);
+    const content: GitbookPage = await this.fetchContentOfPage(main.path, variant);
     const page = {
       title: content.title,
       description: content.description,
