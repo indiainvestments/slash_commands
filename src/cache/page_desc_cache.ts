@@ -1,6 +1,7 @@
 import { GitbookSpaceClient } from "../gitbook_client.ts";
 import { GitbookContent, GitbookPage } from "../types/index.d.ts";
 const CACHE_TTL = 60 * 60 * 1000;
+
 export class Cache {
   private data: Record<string, string> = {};
   private client: GitbookSpaceClient;
@@ -9,7 +10,7 @@ export class Cache {
     this.setUpTimer();
   }
   
-  public fillData = async () => {
+  public async fillData(){
     const bookContent: GitbookContent = await this.client.get('content');
     const page: GitbookPage = bookContent.variants[0].page;
     this.fillCacheRecursively(page);
@@ -26,7 +27,7 @@ export class Cache {
     return this.data[path];
   }
 
-  private fillCacheRecursively = (page: GitbookPage) => {
+  private fillCacheRecursively(page: GitbookPage) {
     this.data[page.uid] = page.description;
     if (page.pages.length === 0) return;
     for (const pg of page.pages) {

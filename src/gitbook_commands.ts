@@ -80,58 +80,6 @@ slash.registerHandler("wiki", async (interaction) => {
   }
 });
 
-slash.registerHandler("list", async (interaction) => {
-  const [query] = interaction.options;
-  try {
-    const {page: result, timeTaken} = await client.list(query.value);
-    const color = randomHexColor.next().value;
-    const embeds: Embed[] = [];
-
-    const author: EmbedAuthor = {
-      name: interaction.user.username,
-      icon_url: interaction.user.avatarURL()
-    }
-    const header = new Embed()
-      .setTitle(result.title)
-      .setURL(result.url)
-      .setColor(color)
-      .setAuthor(author);
-
-    if (result.description && result.description !== "") {
-      header.setDescription(result.description);
-    }
-
-    embeds.push(header);
-
-    const limitedList = result.items.slice(0, 5);
-
-    let desc = limitedList
-      .map((item) => {
-        return `**[${item.title}](${item.url})**\n${
-          item.description || "No description available."
-        }`;
-      })
-      .join("\n\n");
-    if (limitedList.length >= 5) {
-      desc = `${desc}\n\n[click here more results](${client.iiGitbookBaseUrl}/?q=${encodeURI(query.value)})`;
-    }
-
-    if (desc && desc !== "") {
-      const em = new Embed().setDescription(desc).setColor(color);
-      embeds.push(em);
-    }
-    embeds[embeds.length - 1].setFooter(`\/list query: ${query.value} | retrieved in ${(timeTaken).toString().padEnd(3, '0')} seconds`)
-    return interaction.respond({
-      embeds,
-    });
-  } catch (err) {
-    interaction.reply({
-      content: err.message,
-      ephemeral: true,
-    });
-  }
-});
-
 slash.registerHandler("*", (d) =>
   d.reply({
     content: `Unhandled command`,
