@@ -11,5 +11,7 @@ GITBOOK_SPACE_ID
 PUBLIC_KEY
 ```
 
-These environment variables are needed
+These environment variables are needed.
+
+`TOKEN` and `PUBLIC_KEY` can be obtained from Discord Developer Portal
 
