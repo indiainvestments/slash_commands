@@ -10,7 +10,7 @@ export class Cache {
     this.setUpTimer();
   }
   
-  public async fillData(){
+  public async fillData() {
     const bookContent: GitbookContent = await this.client.get('content');
     const page: GitbookPage = bookContent.variants[0].page;
     this.fillCacheRecursively(page);
@@ -23,8 +23,8 @@ export class Cache {
     }, CACHE_TTL);
   }
 
-  public getValue(path: string) {
-    return this.data[path];
+  public getValue(uid: string) {
+    return this.data[uid];
   }
 
   private fillCacheRecursively(page: GitbookPage) {

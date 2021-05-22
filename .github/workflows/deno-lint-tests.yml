@@ -1,4 +1,4 @@
-name: Lint And Tests
+name: CI
 
 on:
   pull_request:
@@ -25,5 +25,11 @@ jobs:
         run: deno lint
 
       - name: Run tests
-        run: deno test
+        run: deno test --coverage=./coverage && deno coverage ./coverage --lcov > ./coverage/cov_profile.lcov
+
+      - name: sending coverage report
+        uses: romeovs/lcov-reporter-action@v0.2.16
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          lcov-file: ./coverage/cov_profile.lcov
 
