@@ -10,3 +10,7 @@ If you want to discuss anything on this website with other people, please check 
 # Searching Wiki Bot
 Slash commands for india investment Discord server to search the wiki. 
 
+# Setting Up & Running the Code
+
+[Installation & Setting Up](https://github.com/indiainvestments/slash_commands/wiki/Installation-&-Setting-Up)
+
