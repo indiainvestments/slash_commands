@@ -1,6 +1,9 @@
 ![GitHub Action](https://github.com/indiainvestments/slash_commands/actions/workflows/deno-lint-tests.yml/badge.svg)
 [![](https://img.shields.io/github/license/indiainvestments/slash_commands)](https://github.com/indiainvestments/slash_commands/blob/main/LICENSE)
+[![Uptime](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Findiainvestments%2Fuptimes%2Fmaster%2Fapi%2Fwiki-search-bot-endpoint%2Fuptime.json)](https://indiainvestments.github.io/uptimes/)
+[![Response time](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Findiainvestments%2Fuptimes%2Fmaster%2Fapi%2Fwiki-search-bot-endpoint%2Fresponse-time.json)](https://indiainvestments.github.io/uptimes/)
 [![codecov](https://codecov.io/gh/indiainvestments/slash_commands/branch/main/graph/badge.svg?token=TA7PR1EOUI)](https://codecov.io/gh/indiainvestments/slash_commands)
+
 
 # Introduction
 
