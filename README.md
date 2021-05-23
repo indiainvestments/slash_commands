@@ -1,4 +1,4 @@
-![GitHub Action](https://github.com/indiainvestments/slash_commands/actions/workflows/deno-lint-tests.yml)
+![GitHub Action](https://github.com/indiainvestments/slash_commands/actions/workflows/deno-lint-tests.yml/badge.svg)
 
 # Introduction
 
