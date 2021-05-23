@@ -9,9 +9,9 @@ export class Cache {
     this.client = client;
     this.setUpTimer();
   }
-  
-  public async fillData(){
-    const bookContent: GitbookContent = await this.client.get('content');
+
+  public async fillData() {
+    const bookContent: GitbookContent = await this.client.get("content");
     const page: GitbookPage = bookContent.variants[0].page;
     this.fillCacheRecursively(page);
   }
@@ -21,10 +21,10 @@ export class Cache {
       console.log("refreshing cache");
       await this.fillData();
     }, CACHE_TTL);
-  }
+  };
 
-  public getValue(path: string) {
-    return this.data[path];
+  public getValue(uid: string) {
+    return this.data[uid];
   }
 
   private fillCacheRecursively(page: GitbookPage) {

@@ -29,18 +29,24 @@ export function getWeightOfPath(path: string, weights: PathWeight[]) {
   const pathValue = weights.find((val, _) => {
     const valPath = val.path;
     return searchPath.match(
-      new RegExp(`^${valPath.startsWith("/") ? valPath.slice(1) : valPath}$`)
+      new RegExp(`^${valPath.startsWith("/") ? valPath.slice(1) : valPath}$`),
     );
   });
   return pathValue?.weight ?? 1.0;
 }
 
-export function getGitbookSpaceUrl(apiUrl: string, version: string, spaceId: string, path = "/", params?: URLSearchParams) {
+export function getGitbookSpaceUrl(
+  apiUrl: string,
+  version: string,
+  spaceId: string,
+  path = "/",
+  params?: URLSearchParams,
+) {
   // trim beginning slash
   const rest = path.startsWith("/") ? path.slice(1, path.length) : path;
   const url = new URL(
     `${version}/spaces/${spaceId}/${rest}`,
-    apiUrl
+    apiUrl,
   );
   if (params) {
     url.search = params.toString();

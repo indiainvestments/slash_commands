@@ -1,4 +1,4 @@
-import { DEFAUL_API_VERSION, DEFAUL_WIKI_BASE_URL} from "./constants.ts";
+import { DEFAUL_API_VERSION, DEFAUL_WIKI_BASE_URL } from "./constants.ts";
 import {
   GitbookClientOptions,
   GitbookContent,
@@ -28,7 +28,7 @@ export class GitbookSpaceClient {
 
   constructor(
     token: string,
-    { spaceId, gitbookApiUrl, version }: GitbookClientOptions
+    { spaceId, gitbookApiUrl, version }: GitbookClientOptions,
   ) {
     this.spaceId = spaceId;
     // trim forward slash
@@ -42,7 +42,13 @@ export class GitbookSpaceClient {
   }
 
   async get(path = "/", params?: URLSearchParams) {
-    const url = getGitbookSpaceUrl(this.apiUrl, this.version, this.spaceId, path, params);
+    const url = getGitbookSpaceUrl(
+      this.apiUrl,
+      this.version,
+      this.spaceId,
+      path,
+      params,
+    );
     const response = await fetch(url, { headers: this.headers });
     return response.json();
   }
@@ -59,7 +65,7 @@ export class GitbookSpaceClient {
     const startTime = Date.now();
     let { results } = (await this.get(
       "search",
-      new URLSearchParams({ query })
+      new URLSearchParams({ query }),
     )) as { results: GitbookSearchNode[] };
     const timeTaken = (Date.now() - startTime) / (1000);
     results = results
@@ -77,27 +83,30 @@ export class GitbookSpaceClient {
       });
     return {
       results,
-      timeTaken
-    }
+      timeTaken,
+    };
   }
 
   async fetchContentOfPage(path: string, variant = "main") {
     const content: GitbookPage = await this.get(
-      `content/v/${variant}/url/${path.startsWith('/') ? path.slice(1) : path}`
+      `content/v/${variant}/url/${path.startsWith("/") ? path.slice(1) : path}`,
     );
     return {
       ...content,
-      contentCompletePath: `${path.startsWith('/') ? path.slice(1) : path}`
-    }
+      contentCompletePath: `${path.startsWith("/") ? path.slice(1) : path}`,
+    };
   }
 
   async list(query: string, variant = "main") {
     const searchSpace = await this.searchSpace(query);
-    const {results: [main], timeTaken} = searchSpace;
+    const { results: [main], timeTaken } = searchSpace;
     if (!main) {
       throw new Error(`No results found for query: ${query}`);
     }
-    const content: GitbookPage = await this.fetchContentOfPage(main.path, variant);
+    const content: GitbookPage = await this.fetchContentOfPage(
+      main.path,
+      variant,
+    );
     const page = {
       title: content.title,
       description: content.description,
@@ -112,7 +121,7 @@ export class GitbookSpaceClient {
     };
     return {
       page,
-      timeTaken
-    }
+      timeTaken,
+    };
   }
 }
