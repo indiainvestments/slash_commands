@@ -1,0 +1,37 @@
+name: main branch code coverage
+
+# only trigger on pull request closed events
+on:
+  pull_request:
+    # only targeting main branch
+    branches:
+      - main
+    types: [closed]
+
+jobs:
+  merge_job:
+    # this job will only run if the PR has been merged
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        deno: ["v1.x", "canary"]
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v2
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@main
+        with:
+          deno-version: ${{ matrix.deno }} # tests across multiple Deno versions
+
+      - name: Run lint
+        run: deno lint
+
+      - name: Run tests
+        run: deno test --coverage=./coverage && deno coverage ./coverage --lcov > ./coverage/cov_profile.lcov
+
+      - name: codecov upload
+        run: bash <(curl -s https://codecov.io/bash) -f ./coverage/**.lcov
