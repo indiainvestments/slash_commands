@@ -1,5 +1,6 @@
 ![GitHub Action](https://github.com/indiainvestments/slash_commands/actions/workflows/deno-lint-tests.yml/badge.svg)
 [![](https://img.shields.io/github/license/indiainvestments/slash_commands)](https://github.com/indiainvestments/slash_commands/blob/main/LICENSE)
+[![codecov](https://codecov.io/gh/indiainvestments/slash_commands/branch/main/graph/badge.svg?token=TA7PR1EOUI)](https://codecov.io/gh/indiainvestments/slash_commands)
 
 # Introduction
 
