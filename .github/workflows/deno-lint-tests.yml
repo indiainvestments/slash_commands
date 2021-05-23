@@ -25,7 +25,7 @@ jobs:
         run: deno lint
 
       - name: Run tests
-        run: deno test --coverage=./coverage && deno coverage ./coverage --lcov > ./coverage/cov_profile.lcov
+        run: deno test --jobs=2 --coverage=./coverage && deno coverage ./coverage --lcov > ./coverage/cov_profile.lcov
 
       - name: codecov upload
         run: bash <(curl -s https://codecov.io/bash) -f ./coverage/**.lcov
