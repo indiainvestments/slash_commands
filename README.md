@@ -1,17 +1,12 @@
-# slash_commands
-Slash commands for india investment server to search the wiki. 
+# Introduction
 
-# Requirements for environment variables
+IndiaInvestments is a community to discuss investments, insurance, finance, economy, and markets in India. This website is a collection of advice and information we have organized as a community.
 
-```bash
-GITBOOK_TOKEN
-GITBOOK_API_URL
-TOKEN
-GITBOOK_SPACE_ID
-PUBLIC_KEY
-```
+If you want to discuss anything on this website with other people, please check out our sub-reddit and discord below.
 
-These environment variables are needed.
+[![](https://img.shields.io/reddit/subreddit-subscribers/indiainvestments?style=social)](https://reddit.com/r/indiainvestments) [![](https://img.shields.io/discord/546638391127572500)](https://discord.gg/hqBNg4u) [![All Contributors](https://img.shields.io/badge/all_contributors-20-orange.svg?style=flat-square)](./#contributors)
 
-`TOKEN` and `PUBLIC_KEY` can be obtained from Discord Developer Portal
+
+# Searching Wiki Bot
+Slash commands for india investment Discord server to search the wiki. 
 
