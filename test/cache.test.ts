@@ -24,7 +24,7 @@ Deno.test({
       time.tick(70 * 60 * 1000);
       assert(
         refreshCache.calls.length === 1,
-        "refresh cache should be only called once"
+        "refresh cache should be only called once",
       );
     } catch (err) {
       console.log(err);

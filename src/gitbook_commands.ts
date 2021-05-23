@@ -11,9 +11,9 @@ slash.init({
   env: true,
 });
 
-const GITBOOK_SPACE_ID = env.get("GITBOOK_SPACE_ID") ?? '';
-const GITBOOK_TOKEN = env.get("GITBOOK_TOKEN") ?? '';
-const GITBOOK_API_URL = env.get("GITBOOK_API_URL") ?? '';
+const GITBOOK_SPACE_ID = env.get("GITBOOK_SPACE_ID") ?? "";
+const GITBOOK_TOKEN = env.get("GITBOOK_TOKEN") ?? "";
+const GITBOOK_API_URL = env.get("GITBOOK_API_URL") ?? "";
 
 const randomHexColor = randomHexColorGen();
 
@@ -28,7 +28,7 @@ await cache.fillData();
 slash.registerHandler("wiki", async (interaction) => {
   const [query] = interaction.options;
   try {
-    let {results, timeTaken} = await client.searchSpace(query.value);
+    let { results, timeTaken } = await client.searchSpace(query.value);
     if (!results.length) {
       return interaction.reply({
         content: `Nothing found for your query: \`${query.value}\``,
@@ -44,16 +44,21 @@ slash.registerHandler("wiki", async (interaction) => {
     let desc = results.map((content: GitbookSearchNode) => {
       const description = cache.getValue(content.uid);
       return `**[${content.title}](${client.iiGitbookBaseUrl}/${content.path})**\n${
-        (description && description !== "") ? description : "No description available."
-      }`
+        (description && description !== "")
+          ? description
+          : "No description available."
+      }`;
     }).join("\n\n");
     if (resultsSize > 5) {
-      desc = `${desc}\n\n[click here more results from our wiki](${client.iiGitbookBaseUrl}/?q=${encodeURI(query.value)})`;
+      desc =
+        `${desc}\n\n[click here more results from our wiki](${client.iiGitbookBaseUrl}/?q=${
+          encodeURI(query.value)
+        })`;
     }
     const embed = new Embed()
       .setColor(color)
       .setDescription(desc)
-      .setThumbnail('https://i.imgur.com/kSxwaQA.png');
+      .setThumbnail("https://i.imgur.com/kSxwaQA.png");
     embeds.push(embed);
 
     if (embeds.length <= 0) {
@@ -64,10 +69,14 @@ slash.registerHandler("wiki", async (interaction) => {
     }
     const author: EmbedAuthor = {
       name: interaction.user.username,
-      "icon_url": interaction.user.avatarURL()
-    }
+      "icon_url": interaction.user.avatarURL(),
+    };
     embeds[0].setAuthor(author);
-    embeds[embeds.length - 1].setFooter(`\/wiki query: ${query.value} | retrieved in ${(timeTaken).toString().padEnd(3, '0')} seconds`);
+    embeds[embeds.length - 1].setFooter(
+      `\/wiki query: ${query.value} | retrieved in ${
+        (timeTaken).toString().padEnd(3, "0")
+      } seconds`,
+    );
     return interaction.respond({
       embeds,
     });
@@ -84,6 +93,5 @@ slash.registerHandler("*", (d) =>
   d.reply({
     content: `Unhandled command`,
     ephemeral: true,
-  })
-);
+  }));
 slash.client.on("interactionError", console.error);

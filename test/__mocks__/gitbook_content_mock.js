@@ -80,7 +80,8 @@ export const mock1 = {
                     description:
                       "Pick a fund that you like. No point having more than one ELSS fund. But know why you're investing in ELSS in the first place, because it's equity, and you should give it longer than 3 years to perform",
                     kind: "document",
-                    path: "ive-to-invest-in-elss-for-80c-tax-saving.-which-fund-s-should-i-pick",
+                    path:
+                      "ive-to-invest-in-elss-for-80c-tax-saving.-which-fund-s-should-i-pick",
                     pages: [],
                   },
                   {
@@ -90,7 +91,8 @@ export const mock1 = {
                     description:
                       "No! You do not need demat account / trading account, to invest in mutual funds.",
                     kind: "document",
-                    path: "should-i-get-a-demat-account-to-buy-units-in-mutual-funds",
+                    path:
+                      "should-i-get-a-demat-account-to-buy-units-in-mutual-funds",
                     pages: [],
                   },
                   {
@@ -146,7 +148,8 @@ export const mock1 = {
                     description:
                       "Yes, you should. Employer provided group policy might have lower cover, or co-pay, or a cap on room-rent. You should get one on your own, to decouple your insurance from your employer",
                     kind: "document",
-                    path: "do-i-need-my-own-health-insurance-employer-already-has-group-policy",
+                    path:
+                      "do-i-need-my-own-health-insurance-employer-already-has-group-policy",
                     pages: [],
                   },
                   {
@@ -247,7 +250,8 @@ export const mock1 = {
                     description:
                       "File a return, it is an important piece of paperwork that can come in handy later. Even if you have no tax to pay. It would take 5-10 mins at worst.",
                     kind: "document",
-                    path: "i-dont-have-any-tax-to-pay.-do-i-still-have-to-file-itr",
+                    path:
+                      "i-dont-have-any-tax-to-pay.-do-i-still-have-to-file-itr",
                     pages: [],
                   },
                 ],
@@ -267,7 +271,8 @@ export const mock1 = {
                     description:
                       "For shorter durations, few days to few months; Overnight funds / Liquid funds / Money Market funds are alright. High Yield Savings Account (HYSA) are ok. If large amount, consider registered advisor.",
                     kind: "document",
-                    path: "where-can-i-park-money-for-a-few-days-a-few-months-or-a-few-years",
+                    path:
+                      "where-can-i-park-money-for-a-few-days-a-few-months-or-a-few-years",
                     pages: [],
                   },
                   {
@@ -286,7 +291,8 @@ export const mock1 = {
                     description:
                       "If that is indeed true, best time to buy gold was a year ago. It can be a great investment, but one cannot judge good or bad investment only the basis of recent returns.",
                     kind: "document",
-                    path: "is-gold-a-good-investment-now-it-has-gone-up-50-this-year",
+                    path:
+                      "is-gold-a-good-investment-now-it-has-gone-up-50-this-year",
                     pages: [],
                   },
                   {
@@ -296,7 +302,8 @@ export const mock1 = {
                     description:
                       "This is done to cull low-effort speculative queries on stocks. Share your thesis in the popular channels. You'd be able to earn the role to post in that channel.",
                     kind: "document",
-                    path: "i-cannot-send-messages-to-stocks-fundamentals-channel-on-discord.-why",
+                    path:
+                      "i-cannot-send-messages-to-stocks-fundamentals-channel-on-discord.-why",
                     pages: [],
                   },
                 ],
