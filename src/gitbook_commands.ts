@@ -14,10 +14,10 @@ slash.init({
 const GITBOOK_SPACE_ID = env.get("GITBOOK_SPACE_ID") ?? "";
 const GITBOOK_TOKEN = env.get("GITBOOK_TOKEN") ?? "";
 const GITBOOK_API_URL = env.get("GITBOOK_API_URL") ?? "";
-
+const II_WIKI_BASE_URL = env.get("II_WIKI_BASE_URL");
 const randomHexColor = randomHexColorGen();
 
-const client = new GitbookSpaceClient(GITBOOK_TOKEN, {
+const client = new GitbookSpaceClient(II_WIKI_BASE_URL, GITBOOK_TOKEN, {
   spaceId: GITBOOK_SPACE_ID,
   gitbookApiUrl: GITBOOK_API_URL,
 });

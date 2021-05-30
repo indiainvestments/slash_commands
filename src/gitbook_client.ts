@@ -24,12 +24,14 @@ export class GitbookSpaceClient {
   public spaceId: string;
   public headers: Headers;
   public version: string;
-  public iiGitbookBaseUrl: string = DEFAUL_WIKI_BASE_URL;
+  public iiGitbookBaseUrl: string;
 
   constructor(
+    iiWikiBaseUrl: string | undefined,
     token: string,
     { spaceId, gitbookApiUrl, version }: GitbookClientOptions,
   ) {
+    this.iiGitbookBaseUrl = iiWikiBaseUrl ?? DEFAUL_WIKI_BASE_URL;
     this.spaceId = spaceId;
     // trim forward slash
     this.apiUrl = gitbookApiUrl.endsWith("/")
