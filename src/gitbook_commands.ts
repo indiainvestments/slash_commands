@@ -51,7 +51,7 @@ slash.registerHandler("wiki", async (interaction) => {
     }).join("\n\n");
     if (resultsSize > 5) {
       desc =
-        `${desc}\n\n[click here more results from our wiki](${client.iiGitbookBaseUrl}/?q=${
+        `${desc}\n\n[Click here for more results from our wiki](${client.iiGitbookBaseUrl}/?q=${
           encodeURI(query.value)
         })`;
     }
