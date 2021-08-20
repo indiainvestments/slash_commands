@@ -36,7 +36,8 @@ slash.registerHandler("wiki", async (interaction) => {
       });
     }
     const resultsSize = results.length;
-    results = results.slice(0, 5);
+    const showResults = 3
+    results = results.slice(0, showResults);
 
     const embeds = [];
     const color = randomHexColor.next().value;
@@ -49,7 +50,7 @@ slash.registerHandler("wiki", async (interaction) => {
           : "No description available."
       }`;
     }).join("\n\n");
-    if (resultsSize > 5) {
+    if (resultsSize > showResults) {
       desc =
         `${desc}\n\n[Click here for more results from our wiki](${client.iiGitbookBaseUrl}/?q=${
           encodeURI(query.value)
