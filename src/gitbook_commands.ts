@@ -36,7 +36,7 @@ slash.registerHandler("wiki", async (interaction) => {
       });
     }
     const resultsSize = results.length;
-    results = results.slice(0, 5);
+    results = results.slice(0, 3);
 
     const embeds = [];
     const color = randomHexColor.next().value;
